@@ -85,7 +85,7 @@ defineExpose({ getScrollTop })
 </template>
 
 <style lang="scss" scoped>
-@import "@/styles/mixins.scss";
+@use "@/styles/mixins.scss";
 
 .result-item {
   display: flex;

@@ -1,0 +1,78 @@
+/** Layout 相关 */
+@use "sass:color";
+/** dark 主题下的变量 */
+// 主题背景颜色
+$theme-bg-color: color.scale(#141414, $lightness: 20%);
+$theme-name: "dark";
+
+@if $theme-name == 'dark' {
+  $theme-bg-color: color.scale(#141414, $lightness: 20%);
+} @else if $theme-name == 'dark-blue' {
+  $theme-bg-color: color.scale(#001b44, $lightness: 20%);
+} @else {
+  $theme-bg-color: #fff;  // 默认背景色
+}
+
+.#{$theme-name} {
+  .app-wrapper {
+    // 侧边栏
+    .sidebar-container {
+      background-color: var(--el-bg-color);
+      .el-menu {
+        background-color: var(--el-bg-color);
+        .el-menu-item {
+          background-color: var(--el-bg-color);
+          &.is-active,
+          &:hover {
+            background-color: var(--el-bg-color-overlay);
+            color: #ffffff;
+          }
+        }
+      }
+      .el-sub-menu__title {
+        background-color: var(--el-bg-color);
+      }
+      .el-sub-menu {
+        &.is-active {
+          > .el-sub-menu__title {
+            color: #ffffff !important;
+          }
+        }
+      }
+    }
+  }
+
+  // 右侧设置面板
+  .handle-button {
+    background-color: $theme-bg-color !important;
+  }
+
+  // 侧边栏的 item 的 popper
+  .el-popper {
+    .el-menu {
+      background-color: var(--el-bg-color);
+      .el-menu-item {
+        background-color: var(--el-bg-color);
+        &.is-active,
+        &:hover {
+          background-color: var(--el-bg-color-overlay);
+          color: #ffffff;
+        }
+      }
+      .el-sub-menu__title {
+        background-color: var(--el-bg-color);
+      }
+      .el-sub-menu {
+        &.is-active {
+          > .el-sub-menu__title {
+            color: #ffffff;
+          }
+        }
+      }
+    }
+    .el-menu--horizontal {
+      border: none;
+    }
+  }
+
+}

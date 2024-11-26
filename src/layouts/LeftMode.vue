@@ -47,7 +47,7 @@ const handleClickOutside = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "@/styles/mixins.scss";
+@use "@/styles/mixins.scss";
 $transition-time: 0.35s;
 
 .app-wrapper {
