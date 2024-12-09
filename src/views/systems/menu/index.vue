@@ -21,7 +21,7 @@
               <span class="custom-tree-node">
                 <span>{{ node.label }}</span>
                 <span v-if="node.level === 1">
-                  <el-button size="small" @click="openConfig(data)" type="primary" link> 配置按钮 </el-button>
+                  <el-button size="small" @click="openThemeConfig(data)" type="primary" link> 配置按钮 </el-button>
                   <el-button size="small" type="success" link @click="qrCode(node, data)"> 生成二维码 </el-button>
                   <!-- 添加子节点 -->
                   <el-button size="small" type="primary" link @click="addFloder(node, data)"> 添加目录/页面 </el-button>
@@ -38,6 +38,7 @@
       </el-col>
     </el-row>
     <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" />
+    <ThemeConfig ref="themeConfigRef" @add-success="handleAddSuccess" />
     <el-dialog
       ref="popoverRef"
       v-model="moduleValue"
@@ -63,11 +64,13 @@
 import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import NewTheme from './newTheme.vue';
+import ThemeConfig from './themeConfig.vue';
 import { ref, unref } from 'vue';
 interface Tree {
   [key: string]: any
 }
 const newThemeRef = ref<InstanceType<typeof NewTheme>>();
+const themeConfigRef = ref<InstanceType<typeof ThemeConfig>>();
 const moduleValue = ref<boolean>(false);
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
@@ -179,6 +182,10 @@ const confirmLiftType = (liftType: string) => {
 
 const handleNodeClick = (data: Node) => {
   console.log(data);
+};
+
+const openThemeConfig = (data: Tree) => {
+  themeConfigRef.value?.handleOpen();
 };
 
 const openConfig = (data: Tree) => {

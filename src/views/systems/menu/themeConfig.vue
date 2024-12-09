@@ -1,10 +1,10 @@
 <template>
   <el-dialog
-    title="新建目录/页面"
+    title="主题页配置"
     v-model="moduleValue"
     :before-close="handleClose"
     top="5vh"
-    width="40%"
+    width="50%"
     append-to-body
     center
   >
@@ -12,17 +12,19 @@
     <el-row :gutter="20">
       <el-col :span="24">
         <el-form-item>
-          <el-input v-model="themeFormData.name" placeholder="请输入主题名称"></el-input>
+          <el-input v-model="themeFormData.themeName" placeholder="请输入主题名称"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="24">
         <el-form-item class="text-center">
-          <el-button type="primary" @click="addTheme">确定</el-button>
-          <el-button @click="handleClose">取消</el-button>
         </el-form-item>
       </el-col>
     </el-row>
   </el-form>
+  <template #footer>
+    <el-button type="primary" @click="addTheme">确定</el-button>
+    <el-button @click="handleClose">取消</el-button>
+  </template>
   </el-dialog>
 </template>
 
@@ -30,7 +32,7 @@
 import { ref } from 'vue';
 const moduleValue = ref(false);
 const themeFormData = ref({
-  name: ''
+  themeName: ''
 })
 const emit = defineEmits(['addSuccess']);
 const handleClose = () => {
