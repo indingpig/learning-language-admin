@@ -21,15 +21,15 @@
               <span class="custom-tree-node">
                 <span>{{ node.label }}</span>
                 <span v-if="node.level === 1">
-                  <el-button size="small" @click="openConfig(data)" type="text"> 配置按钮 </el-button>
-                  <el-button size="small" type="text" @click="qrCode(node, data)"> 生成二维码 </el-button>
+                  <el-button size="small" @click="openConfig(data)" type="primary" link> 配置按钮 </el-button>
+                  <el-button size="small" type="success" link @click="qrCode(node, data)"> 生成二维码 </el-button>
                   <!-- 添加子节点 -->
-                  <el-button size="small" type="text" @click="addFloder(node, data)" v-click-outside="onClickOutside"> 添加目录/页面 </el-button>
+                  <el-button size="small" type="primary" link @click="addFloder(node, data)"> 添加目录/页面 </el-button>
                 </span>
                 <span v-else>
-                  <el-button size="small" @click="openConfig(data)" type="text"> 配置按钮 </el-button>
-                  <el-button size="small" type="text" @click="remove(node, data)"> 删除 </el-button>
-                  <el-button v-if="isLastChild(node)" size="small" type="text" @click="addSibling(node, data)"> 添加同级 </el-button>
+                  <el-button size="small" @click="openConfig(data)" type="primary" link> 配置按钮 </el-button>
+                  <el-button size="small" type="primary" link @click="addSibling(node, data)" v-if="!isLeafNode(node)"> 添加页面 </el-button>
+                  <el-button size="small" type="danger" link @click="removeConfirm(node, data)"> 删除 </el-button>
                 </span>
               </span>
             </template>
@@ -38,24 +38,29 @@
       </el-col>
     </el-row>
     <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" />
-    <el-popover
+    <el-dialog
       ref="popoverRef"
-      :virtual-ref="buttonRef"
-      trigger="click"
-      title="With title"
-      virtual-triggering
+      v-model="moduleValue"
+      top="5vh"
+      width="20%"
+      append-to-body
+      title="新建目录/页面"
+      center
     >
       <el-radio-group v-model="liftType">
         <el-radio value="floder" size="large">目录</el-radio>
         <el-radio value="page" size="large">页面</el-radio>
       </el-radio-group>
-      <el-button size="small" type="primary" @click="confirmLiftType">确定</el-button>
-    </el-popover>
+      <template #footer>
+        <el-button size="small" @click="moduleValue = false">取消</el-button>
+        <el-button size="small" type="primary" @click="confirmLiftType(liftType)">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElTree, ClickOutside as vClickOutside, ElPopover } from 'element-plus';
+import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import NewTheme from './newTheme.vue';
 import { ref, unref } from 'vue';
@@ -63,7 +68,7 @@ interface Tree {
   [key: string]: any
 }
 const newThemeRef = ref<InstanceType<typeof NewTheme>>();
-const buttonRef = ref<HTMLElement>();
+const moduleValue = ref<boolean>(false);
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
 const deptOptions = ref<Tree[]>([
@@ -150,24 +155,27 @@ const filterNode = (value: string, data: Tree) => {
   return data.label.indexOf(value) !== -1;
 };
 
+const currentNode = ref<Node | null>(null);
+const currentData = ref<Tree | null>(null);
+
 const addFloder = (node: Node, data: Tree) => {
-  const children = node.data.children;
-  children.push({
-    label: '新节点',
+  currentNode.value = node;
+  currentData.value = data;
+  moduleValue.value = true;
+};
+
+const confirmLiftType = (liftType: string) => {
+  let label = '新目录';
+  if (liftType === 'page') {
+    label = '新页面';
+  }
+  currentData.value?.children.push({
+    label,
+    type: liftType,
     children: []
   });
+  moduleValue.value = false;
 };
-
-const confirmLiftType = () => {
-  console.log(liftType.value);
-};
-
-const onClickOutside = () => {
-  if (!popoverRef.value) {
-    return;
-  }
-  unref(popoverRef).popperRef?.delayHide?.()
-}
 
 const handleNodeClick = (data: Node) => {
   console.log(data);
@@ -181,27 +189,43 @@ const qrCode = (node: Node, data: Tree) => {
   console.log(node, data);
 };
 
+const removeNode = ref<Node | null>(null);
+const removeData = ref<Tree | null>(null);
+
 const remove = (node: Node, data: Tree) => {
-  console.log(node, data);
+  const parent = node.parent;
+  if (!parent) {
+    return;
+  }
+  const children = parent.data.children;
+  const index = children.indexOf(node.data);
+  children.splice(index, 1);
+};
+
+const removeConfirm = (node: Node, data: Tree) => {
+  removeNode.value = node;
+  removeData.value = data;
+  ElMessageBox.confirm('此操作将永久删除该节点, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    remove(removeNode.value as Node, removeData.value as Tree);
+  }).catch(() => {
+    console.log('取消删除');
+  });
 };
 
 const addSibling = (node: Node, data: Tree) => {
-  const parent = node.parent;
-  if (parent) {
-    parent.data.children.push({
-      label: '新节点',
-      children: []
-    });
-  }
+  node.data.children.push({
+    label: '新页面',
+    type: 'page',
+    children: null
+  });
 };
 
-const isLastChild = (node: Node) => {
-  const parent = node.parent;
-  if (parent) {
-    const siblings = parent.data.children;
-    return siblings[siblings.length - 1] === node.data;
-  }
-  return false;
+const isLeafNode = (node: Node) => {
+  return !node.data.children || node.data.children.length === 0;
 };
 </script>
 
