@@ -11,8 +11,8 @@
     center
   >
     <main>
-      <h4>主题名称</h4>
-      <el-input v-model="themeName" placeholder="请输入主题名称"></el-input>
+      <h4>{{ dialogConfig.labelTitle }}</h4>
+      <el-input v-model="label"></el-input>
       <div>
         <QuillEditor v-model:value="content" :options="editorOptions"/>
       </div>
@@ -54,11 +54,12 @@ interface Tree {
 }
 const moduleValue = ref(false);
 const content = ref<string>('');
-const themeName = ref<string>('');
+const label = ref<string>('');
 const dragList = ref<Tree[]>([]);
 const drag = ref<boolean>(false);
 const dialogConfig = reactive({
   title: '主题页配置',
+  labelTitle: '主题名称',
   width: '40%',
   themeError: '请输入主题名称',
 })
@@ -92,20 +93,23 @@ let orginData: Tree = {
 const handleOpen = (data: Tree) => {
   dialogConfig.title = '主题页配置';
   dialogConfig.themeError = '请输入主题名称';
+  dialogConfig.labelTitle = '主题名称';
+  editorOptions.placeholder = '请输入主题';
   if (data.type !== 'theme') {
     dialogConfig.title = '目录配置';
     dialogConfig.themeError = '请输入目录名称';
+    dialogConfig.labelTitle = '目录名称';
+    editorOptions.placeholder = '请输入目录名称';
   }
   moduleValue.value = true;
   orginData = data;
-  themeName.value = data.label;
+  label.value = data.label;
   content.value = data.theme;
   dragList.value = data.children;
 }
 
 const confirm = () => {
-  handleClose();
-  if (!themeName.value) {
+  if (!label.value) {
     ElMessage.error(dialogConfig.themeError);
     return;
   }
@@ -113,9 +117,10 @@ const confirm = () => {
     ElMessage.error(dialogConfig.themeError);
     return;
   }
-  orginData.label = content.value;
+  orginData.label = label.value;
   orginData.children = dragList.value;
   emit('editSuccess', orginData);
+  handleClose();
 }
 
 const dragOptions = computed(() => {

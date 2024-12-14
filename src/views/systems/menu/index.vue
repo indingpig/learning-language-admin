@@ -28,7 +28,7 @@
                   <el-button size="small" type="primary" link @click="addFloder(node, data)"> 添加目录/页面 </el-button>
                 </span>
                 <span v-else>
-                  <el-button size="small" @click="openConfig(data)" type="primary" link> 配置按钮 </el-button>
+                  <el-button size="small" @click="openThemeConfig(data)" type="primary" link> 配置按钮 </el-button>
                   <el-button size="small" type="primary" link @click="addSibling(node, data)" v-if="!isLeafNode(node)"> 添加页面 </el-button>
                   <el-button size="small" type="danger" link @click="removeConfirm(node, data)"> 删除 </el-button>
                 </span>
