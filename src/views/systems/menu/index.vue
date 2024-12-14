@@ -2,7 +2,8 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="24">
-        <el-button @click="addNewTheme">+ 新增根主题</el-button>
+        <el-button @click="addNewTheme">+ 新增主题</el-button>
+        <el-button @click="openAdDialog">配置广告</el-button>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -22,13 +23,13 @@
               <span class="custom-tree-node">
                 <span>{{ node.label }}</span>
                 <span v-if="node.level === 1">
-                  <el-button size="small" @click="openThemeConfig(data)" type="primary" link> 配置按钮 </el-button>
+                  <el-button size="small" @click="openThemeConfig(data)" type="primary" link> 配置 </el-button>
                   <el-button size="small" type="success" link @click="qrCode(node, data)"> 生成二维码 </el-button>
                   <!-- 添加子节点 -->
                   <el-button size="small" type="primary" link @click="addFloder(node, data)"> 添加目录/页面 </el-button>
                 </span>
                 <span v-else>
-                  <el-button size="small" @click="openConfig(data)" type="primary" link> 配置按钮 </el-button>
+                  <el-button size="small" @click="openConfig(data)" type="primary" link> 配置 </el-button>
                   <el-button size="small" type="primary" link @click="addSibling(node, data)" v-if="!isLeafNode(node)"> 添加页面 </el-button>
                   <el-button size="small" type="danger" link @click="removeConfirm(node, data)"> 删除 </el-button>
                 </span>
@@ -41,6 +42,7 @@
     <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" />
     <ThemeConfig ref="themeConfigRef" @edit-success="handleEditSuccess" />
     <PageConfig ref="pageConfigRef" @edit-success="handleEditSuccess" />
+    <AdConfig ref="adConfigRef"/>
     <el-dialog
       ref="popoverRef"
       v-model="moduleValue"
@@ -68,6 +70,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import NewTheme from './newTheme.vue';
 import ThemeConfig from './themeConfig.vue';
 import PageConfig from './pageConfig.vue';
+import AdConfig from './AdConfig.vue';
 import { ref } from 'vue';
 interface Tree {
   [key: string]: any
@@ -75,6 +78,7 @@ interface Tree {
 const newThemeRef = ref<InstanceType<typeof NewTheme>>();
 const themeConfigRef = ref<InstanceType<typeof ThemeConfig>>();
 const pageConfigRef = ref<InstanceType<typeof PageConfig>>();
+const adConfigRef = ref<InstanceType<typeof AdConfig>>();
 const moduleValue = ref<boolean>(false);
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
@@ -242,6 +246,10 @@ const addSibling = (node: Node, data: Tree) => {
     type: 'page',
     children: null
   });
+};
+
+const openAdDialog = () => {
+  adConfigRef.value?.handleOpen('default');
 };
 
 const isLeafNode = (node: Node) => {
