@@ -80,6 +80,9 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
             /** 打包时移除所有注释 */
             legalComments: "none"
           },
+    optimizeDeps: {
+      include: ["quill"]
+    },
     /** Vite 插件 */
     plugins: [
       vue(),
