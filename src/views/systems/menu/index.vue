@@ -6,7 +6,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <el-col :span="5">
+      <el-col :xs="14" :sm="10" :md="8" :lg="3" :xl="1">
         <div class="head-container">
           <el-tree
             :data="deptOptions"
@@ -15,6 +15,7 @@
             :filter-node-method="filterNode"
             ref="treeRef"
             default-expand-all
+            node-key="id"
             @node-click="handleNodeClick"
           >
             <template #default="{ node, data }">
@@ -38,7 +39,7 @@
       </el-col>
     </el-row>
     <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" />
-    <ThemeConfig ref="themeConfigRef" @add-success="handleAddSuccess" />
+    <ThemeConfig ref="themeConfigRef" @edit-success="handleEditSuccess" />
     <el-dialog
       ref="popoverRef"
       v-model="moduleValue"
@@ -65,7 +66,7 @@ import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import NewTheme from './newTheme.vue';
 import ThemeConfig from './themeConfig.vue';
-import { ref, unref } from 'vue';
+import { ref } from 'vue';
 interface Tree {
   [key: string]: any
 }
@@ -185,7 +186,12 @@ const handleNodeClick = (data: Node) => {
 };
 
 const openThemeConfig = (data: Tree) => {
-  themeConfigRef.value?.handleOpen();
+  themeConfigRef.value?.handleOpen(data);
+};
+
+const handleEditSuccess = (data: Tree) => {
+  replaceNodeById(deptOptions.value, data);
+  deptOptions.value = [...deptOptions.value];
 };
 
 const openConfig = (data: Tree) => {
@@ -233,6 +239,22 @@ const addSibling = (node: Node, data: Tree) => {
 
 const isLeafNode = (node: Node) => {
   return !node.data.children || node.data.children.length === 0;
+};
+
+// 递归查找并替换节点
+const replaceNodeById = (nodes: Tree[], target: Tree) => {
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    if (node.id === target.id) {
+      // 如果找到了匹配的节点，替换它
+      nodes[i] = target;
+      return; // 找到后可以直接返回
+    }
+    // 如果有子节点，递归查找
+    if (node.children && node.children.length > 0) {
+      replaceNodeById(node.children, target);
+    }
+  }
 };
 </script>
 
