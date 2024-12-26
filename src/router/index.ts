@@ -107,15 +107,24 @@ export const dynamicRoutes: RouteRecordRaw[] = [
     redirect: '/system/menu',
     meta: {
       title: '系统管理',
-      svgIcon: 'system',
+      svgIcon: 'lock',
       roles: ['admin'],
       alwaysShow: true
     },
     children: [
       {
-        name: 'menu',
-        path: 'menu',
+        name: 'menuDetail',
+        path: 'menu-detail/:catalogId',
         component: () => import("@/views/systems/menu/index.vue"),
+        meta: {
+          title: '主题详情',
+          hidden: true
+        }
+      },
+      {
+        name: 'menu',
+        path: 'menu-list',
+        component: () => import("@/views/systems/menu/menuList.vue"),
         meta: {
           title: '目录管理'
         }
