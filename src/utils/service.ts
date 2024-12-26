@@ -7,7 +7,7 @@ import { getToken } from "./cache/cookies"
 /** 退出登录并强制刷新页面（会重定向到登录页） */
 function logout() {
   useUserStore().logout()
-  location.reload()
+  // location.reload()
 }
 
 /** 创建请求实例 */
@@ -36,6 +36,9 @@ function createService() {
         return Promise.reject(new Error("非本系统的接口"))
       }
       switch (code) {
+        case 200:
+        case '200':
+          return apiData
         case 0:
           // 本系统采用 code === 0 来表示没有业务错误
           return apiData
@@ -44,7 +47,7 @@ function createService() {
           return logout()
         default:
           // 不是正确的 code
-          ElMessage.error(apiData.message || "Error")
+          ElMessage.error(apiData.msg || "Error")
           return Promise.reject(new Error("Error"))
       }
     },
