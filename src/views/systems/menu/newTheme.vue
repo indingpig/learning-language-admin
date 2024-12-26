@@ -11,8 +11,11 @@
   <el-form ref="themeFormRef" :model="themeFormData">
     <el-row :gutter="20">
       <el-col :span="24">
-        <el-form-item>
-          <el-input v-model="themeFormData.name" placeholder="请输入主题名称"></el-input>
+        <el-form-item label="主题名称" prop="subjectName">
+          <el-input v-model="themeFormData.subjectName" placeholder="请输入主题名称"></el-input>
+        </el-form-item>
+        <el-form-item label="主题描述" prop="subjectDesc">
+          <el-input v-model="themeFormData.subjectDesc" placeholder="请输入主题名称"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="24">
@@ -28,9 +31,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { addSubjectApi } from '@/api/menu';
+import { ElMessage } from 'element-plus';
 const moduleValue = ref(false);
 const themeFormData = ref({
-  name: ''
+  subjectName: '',
+  subjectDesc: ''
 })
 const emit = defineEmits(['addSuccess']);
 const handleClose = () => {
@@ -42,8 +48,15 @@ const handleOpen = () => {
 
 const addTheme = () => {
   console.log(themeFormData.value);
-  handleClose();
-  emit('addSuccess');
+  if (themeFormData.value.subjectName.trim() === '' || themeFormData.value.subjectDesc.trim() === '') {
+    ElMessage.error('请检查表单');
+    return;
+  }
+  addSubjectApi(themeFormData.value).then(() => {
+    ElMessage.success('新增主题成功');
+    handleClose();
+    emit('addSuccess');
+  });
 }
 
 defineExpose({
