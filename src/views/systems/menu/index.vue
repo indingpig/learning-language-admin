@@ -2,7 +2,6 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="24">
-        <el-button @click="addNewTheme">+ 新增主题</el-button>
         <el-button @click="openAdDialog">配置广告</el-button>
       </el-col>
     </el-row>
@@ -39,7 +38,6 @@
         </div>
       </el-col>
     </el-row>
-    <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" />
     <ThemeConfig ref="themeConfigRef" @edit-success="handleEditSuccess" />
     <PageConfig ref="pageConfigRef" @edit-success="handleEditSuccess" />
     <AdConfig ref="adConfigRef"/>
@@ -67,7 +65,6 @@
 <script setup lang="ts">
 import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
 import type Node from 'element-plus/es/components/tree/src/model/node'
-import NewTheme from './newTheme.vue';
 import ThemeConfig from './themeConfig.vue';
 import PageConfig from './pageConfig.vue';
 import AdConfig from './AdConfig.vue';
@@ -75,7 +72,6 @@ import { ref } from 'vue';
 interface Tree {
   [key: string]: any
 }
-const newThemeRef = ref<InstanceType<typeof NewTheme>>();
 const themeConfigRef = ref<InstanceType<typeof ThemeConfig>>();
 const pageConfigRef = ref<InstanceType<typeof PageConfig>>();
 const adConfigRef = ref<InstanceType<typeof AdConfig>>();
@@ -148,17 +144,8 @@ const defaultProps = {
 };
 const liftType = ref('floder');
 
-const addNewTheme = () => {
-  newThemeRef.value?.handleOpen();
-};
-
-const handleAddSuccess = () => {
-  deptOptions.value.push({
-    id: 4,
-    label: '主题 4',
-    type: 'theme',
-    children: []
-  });
+const openAdDialog = () => {
+  adConfigRef.value?.handleOpen('default');
 };
 
 const filterNode = (value: string, data: Tree) => {
@@ -246,10 +233,6 @@ const addSibling = (node: Node, data: Tree) => {
     type: 'page',
     children: null
   });
-};
-
-const openAdDialog = () => {
-  adConfigRef.value?.handleOpen('default');
 };
 
 const isLeafNode = (node: Node) => {
