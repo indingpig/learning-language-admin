@@ -9,6 +9,7 @@ import { type LoginRequestData } from "@/api/login/types/login"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import Owl from "./components/Owl.vue"
 import { useFocus } from "./hooks/useFocus"
+import { getRsaCode } from '@/utils/jsencrypt';
 
 const router = useRouter()
 const { isFocus, handleBlur, handleFocus } = useFocus()
@@ -23,15 +24,16 @@ const codeUrl = ref("")
 /** 登录表单数据 */
 const loginFormData: LoginRequestData = reactive({
   username: "admin",
-  password: "12345678",
-  code: ""
+  password: "admin123",
+  code: "",
+  uuid: ""
 })
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" }
+    { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
   ],
   code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
 }
@@ -40,12 +42,14 @@ const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean, fields) => {
     if (valid) {
       loading.value = true
+      const data = { ...loginFormData }
       useUserStore()
-        .login(loginFormData)
-        .then(() => {
-          router.push({ path: "/" })
+        .login(data)
+        .then((data) => {
+          console.log("登录成功", data)
+          router.push({ name: "Dashboard" })
         })
-        .catch(() => {
+        .catch((error) => {
           createCode()
           loginFormData.password = ""
         })
@@ -64,7 +68,8 @@ const createCode = () => {
   // 获取验证码
   codeUrl.value = ""
   getLoginCodeApi().then((res) => {
-    codeUrl.value = res.data
+    loginFormData.uuid = res.uuid
+    codeUrl.value = 'data:image/png;base64,' + res.img;
   })
 }
 
