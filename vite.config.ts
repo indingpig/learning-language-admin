@@ -35,8 +35,10 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       /** 接口代理 */
       proxy: {
         "/api/v1": {
-          target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212",
+          target: "http://localhost:8080",
+          rewrite: (path) => path.replace(/^\/api\/v1/, ""),
           ws: true,
+          secure: false,
           /** 是否允许跨域 */
           changeOrigin: true
         }
