@@ -41,41 +41,36 @@
     <ThemeConfig ref="themeConfigRef" @edit-success="handleEditSuccess" />
     <PageConfig ref="pageConfigRef" @edit-success="handleEditSuccess" />
     <AdConfig ref="adConfigRef"/>
-    <el-dialog
-      ref="popoverRef"
-      v-model="moduleValue"
-      top="5vh"
-      width="20%"
-      append-to-body
-      title="新建目录/页面"
-      center
-    >
-      <el-radio-group v-model="liftType">
-        <el-radio value="floder" size="large">目录</el-radio>
-        <el-radio value="page" size="large">页面</el-radio>
-      </el-radio-group>
-      <template #footer>
-        <el-button size="small" @click="moduleValue = false">取消</el-button>
-        <el-button size="small" type="primary" @click="confirmLiftType(liftType)">确定</el-button>
-      </template>
-    </el-dialog>
+    <QrCode ref="qrCodeRef" :subject-id="subjectId" />
+    <AddChild ref="addChildRef" @add-success="handleAddSuccess" />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
+import { getCatalogSubjectApi, getQrcodeApi, getSubjectApi } from '@/api/menu';
+import { useRoute, useRouter } from "vue-router"
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import ThemeConfig from './themeConfig.vue';
 import PageConfig from './pageConfig.vue';
 import AdConfig from './AdConfig.vue';
-import { ref } from 'vue';
+import QrCode from './qrCode.vue';
+import AddChild from './addChild.vue';
+import { onMounted, ref } from 'vue';
 interface Tree {
   [key: string]: any
 }
+const route = useRoute();
+const router = useRouter();
 const themeConfigRef = ref<InstanceType<typeof ThemeConfig>>();
 const pageConfigRef = ref<InstanceType<typeof PageConfig>>();
 const adConfigRef = ref<InstanceType<typeof AdConfig>>();
+const qrCodeRef = ref<InstanceType<typeof QrCode>>();
+const addChildRef = ref<InstanceType<typeof AddChild>>();
 const moduleValue = ref<boolean>(false);
+const qrcodeInt = ref<boolean>(false);
+const qrcodeUrl = ref<string>()
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
 const deptOptions = ref<Tree[]>([
@@ -157,9 +152,7 @@ const currentNode = ref<Node | null>(null);
 const currentData = ref<Tree | null>(null);
 
 const addFloder = (node: Node, data: Tree) => {
-  currentNode.value = node;
-  currentData.value = data;
-  moduleValue.value = true;
+  addChildRef.value?.open();
 };
 
 const confirmLiftType = (liftType: string) => {
@@ -189,15 +182,20 @@ const handleEditSuccess = (data: Tree) => {
 };
 
 const openConfig = (data: Tree) => {
-  if (data.type === 'theme') {
-    themeConfigRef.value?.handleOpen(data);
-  } else {
+  console.log(data);
+  if (data.type === 'page') {
     pageConfigRef.value?.handleOpen(data);
+  } else {
+    themeConfigRef.value?.handleOpen(data);
   }
 };
 
+const subjectId = route.params.subjectId as string;
 const qrCode = (node: Node, data: Tree) => {
-  console.log(node, data);
+  getQrcodeApi(subjectId).then((res: any) => {
+    qrcodeUrl.value = 'data:image/png;base64,' + res.img;
+    qrcodeInt.value = true;
+  })
 };
 
 const removeNode = ref<Node | null>(null);
@@ -235,6 +233,10 @@ const addSibling = (node: Node, data: Tree) => {
   });
 };
 
+const handleAddSuccess = () => {
+  initPage();
+};
+
 const isLeafNode = (node: Node) => {
   return !node.data.children || node.data.children.length === 0;
 };
@@ -254,6 +256,51 @@ const replaceNodeById = (nodes: Tree[], target: Tree) => {
     }
   }
 };
+
+const initPage = () => {
+  const subjectId = route.params.subjectId as string;
+  getSubjectApi(subjectId).then((res: any) => {
+    const subjectDesc = res.data.subjectDesc;
+    const subjectName = res.data.subjectName;
+    const children = []
+    if (res.data.catalogList) {
+      res.data.catalogList.forEach((item: any) => {
+        item.type = 'folder';
+        item.sortId = item.catalogSort;
+        item.id = subjectId + '-' + item.catalogId;
+        item.children = item.contentList.map((content: any) => {
+          content.type = 'page';
+          item.id = subjectId + '-' + item.catalogId + '-' + content.contentId;
+          content.sortId = content.contentSort;
+          return content;
+        });
+      });
+      children.push(...res.data.catalogList);
+    }
+    if (res.data.contentList) {
+      res.data.contentList.forEach((item: any) => {
+        item.type = 'page';
+        item.sortId = item.contentSort;
+        item.id = subjectId + '-' + item.contentId;
+      });
+      children.push(...res.data.contentList);
+    }
+    const node = [
+      {
+        id: subjectId,
+        label: subjectName,
+        type: 'theme',
+        children
+      }
+    ]
+    deptOptions.value = node;
+    console.log(res.data);
+  })
+}
+
+onMounted(() => {
+  initPage();
+})
 </script>
 
 <style lang="scss" scoped>
