@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import Upload from '@/components/Upload/index.vue';
+import { getAdApi } from '@/api/menu';
 import { ElMessage } from 'element-plus';
 const moduleValue = ref(false);
 const formData = reactive({
@@ -38,7 +39,11 @@ const handleClose = () => {
   moduleValue.value = false;
 }
 const handleOpen = (id: string) => {
-  moduleValue.value = true;
+  getAdApi(id).then((res: any) => {
+    formData.picId = res.picId;
+    formData.url = res.url;
+    moduleValue.value = true;
+  })
 }
 
 const confirm = () => {
