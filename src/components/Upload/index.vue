@@ -6,6 +6,7 @@
         <span>+</span>
       </div>
       <img v-if="image" :src="image" alt="Uploaded Image" class="uploaded-image" />
+      <img v-if="!image && imageUrl" alt="Uploaded Image" class="uploaded-image" />
       <input ref="fileInputRef" type="file" accept="image/*" @change="handleImageUpload" v-show="false"/>
     </div>
   </div>
@@ -13,9 +14,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { uploadApi } from '@/api/menu';
+import { ElMessage } from 'element-plus';
 
 const image = ref<string>();  // 存储上传后的图片 URL
 const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const props = defineProps<{
+  imageUrl: string;
+}>();
+const emits = defineEmits(['updateSuccess']);
 
 // 触发文件输入框的点击事件
 const triggerFileInput = () => {
@@ -34,6 +42,16 @@ const handleImageUpload = (event: Event) => {
 
 const handleUpload = (file: File) => {
   // 上传图片逻辑
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('name', file.name);
+  uploadApi(formData).then((res: any) => {
+    console.log('上传成功', res);
+    ElMessage.success('上传成功');
+    emits('updateSuccess', res.fileurl);
+    // 图片上传成功后，将图片转成 URL
+    image.value = URL.createObjectURL(file);
+  });
 };
 </script>
 
