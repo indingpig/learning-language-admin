@@ -29,7 +29,7 @@
                 </span>
                 <span v-else>
                   <el-button size="small" @click="openConfig(data)" type="primary" link> 配置 </el-button>
-                  <el-button size="small" type="primary" link @click="addSibling(node, data)" v-if="!isLeafNode(node)"> 添加页面 </el-button>
+                  <el-button size="small" type="primary" link @click="addSibling(data)" v-if="!isLeafNode(data)"> 添加页面 </el-button>
                   <el-button size="small" type="danger" link @click="removeConfirm(node, data)"> 删除 </el-button>
                 </span>
               </span>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
-import { getCatalogSubjectApi, getQrcodeApi, getSubjectApi } from '@/api/menu';
+import { getCatalogSubjectApi, getQrcodeApi, getSubjectApi, removeCatalogApi, removeContentApi } from '@/api/menu';
 import { useRoute, useRouter } from "vue-router"
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import ThemeConfig from './themeConfig.vue';
@@ -155,19 +155,6 @@ const addFloder = (node: Node, data: Tree) => {
   addChildRef.value?.open();
 };
 
-const confirmLiftType = (liftType: string) => {
-  let label = '新目录';
-  if (liftType === 'page') {
-    label = '新页面';
-  }
-  currentData.value?.children.push({
-    label,
-    type: liftType,
-    children: []
-  });
-  moduleValue.value = false;
-};
-
 const handleNodeClick = (data: Node) => {
   console.log(data);
 };
@@ -177,14 +164,15 @@ const openThemeConfig = (data: Tree) => {
 };
 
 const handleEditSuccess = (data: Tree) => {
-  replaceNodeById(deptOptions.value, data);
-  deptOptions.value = [...deptOptions.value];
+  // replaceNodeById(deptOptions.value, data);
+  // deptOptions.value = [...deptOptions.value];
+  initPage();
 };
 
 const openConfig = (data: Tree) => {
   console.log(data);
   if (data.type === 'page') {
-    pageConfigRef.value?.handleOpen(data);
+    pageConfigRef.value?.handleOpen(data, data.catalogId, false);
   } else {
     themeConfigRef.value?.handleOpen(data);
   }
@@ -206,9 +194,25 @@ const remove = (node: Node, data: Tree) => {
   if (!parent) {
     return;
   }
-  const children = parent.data.children;
-  const index = children.indexOf(node.data);
-  children.splice(index, 1);
+  if (data.type === 'folder') {
+    removeFloder(data.catalogId);
+  }
+  if (data.type === 'page') {
+    removePage(data.contentId);
+  }
+  console.log(data);
+};
+
+const removeFloder = (catalogId: string) => {
+  removeCatalogApi(catalogId).then(() => {
+    initPage();
+  });
+};
+
+const removePage = (contentId: string) => {
+  removeContentApi(contentId).then(() => {
+    initPage();
+  });
 };
 
 const removeConfirm = (node: Node, data: Tree) => {
@@ -225,20 +229,23 @@ const removeConfirm = (node: Node, data: Tree) => {
   });
 };
 
-const addSibling = (node: Node, data: Tree) => {
-  node.data.children.push({
-    label: '新页面',
-    type: 'page',
-    children: null
-  });
+const addSibling = (data: Tree) => {
+  const catalogId = data.catalogId;
+  pageConfigRef.value?.handleOpen(data, catalogId, true);
+  console.log(data);
+  // node.data.children.push({
+  //   label: '新页面',
+  //   type: 'page',
+  //   children: null
+  // });
 };
 
 const handleAddSuccess = () => {
   initPage();
 };
 
-const isLeafNode = (node: Node) => {
-  return !node.data.children || node.data.children.length === 0;
+const isLeafNode = (node: any) => {
+  return node.type === 'page';
 };
 
 // 递归查找并替换节点
@@ -267,10 +274,12 @@ const initPage = () => {
       res.data.catalogList.forEach((item: any) => {
         item.type = 'folder';
         item.sortId = item.catalogSort;
-        item.id = subjectId + '-' + item.catalogId;
+        item.label = item.catalogDesc;
+        item.id = subjectId + '-folder-' + item.catalogId;
         item.children = item.contentList.map((content: any) => {
           content.type = 'page';
-          item.id = subjectId + '-' + item.catalogId + '-' + content.contentId;
+          content.label = content.contentDesc;
+          item.id = subjectId + '-folder-' + item.catalogId + '-page-' + content.contentId;
           content.sortId = content.contentSort;
           return content;
         });
@@ -280,17 +289,24 @@ const initPage = () => {
     if (res.data.contentList) {
       res.data.contentList.forEach((item: any) => {
         item.type = 'page';
+        item.label = item.contentDesc;
         item.sortId = item.contentSort;
-        item.id = subjectId + '-' + item.contentId;
+        item.id = subjectId + '-page-' + item.contentId;
       });
       children.push(...res.data.contentList);
     }
+    children.sort((item1, item2) => {
+      // if (item1.sortId)
+      return item1.sortId - item2.sortId;
+    });
     const node = [
       {
         id: subjectId,
         label: subjectName,
+        labelDesc: subjectDesc,
         type: 'theme',
-        children
+        children,
+        subjectImg: res.data.subjectImg
       }
     ]
     deptOptions.value = node;
