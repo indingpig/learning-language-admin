@@ -16,7 +16,7 @@
       <div>
         <QuillEditor v-model:value="content" :options="editorOptions"/>
       </div>
-      <Upload />
+      <Upload @update-success="updateSuccess" :imageUrl="subjectImg"/>
       <!-- tag="transition-group" -->
       <draggable
         v-model="dragList"
@@ -45,7 +45,9 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
+import { useRoute } from "vue-router"
 import { quillEditor as QuillEditor } from 'vue3-quill';
+import { updateSubjectApi } from '@/api/menu';
 import draggable from 'vuedraggable';
 import Upload from '@/components/Upload/index.vue';
 import { ElMessage } from 'element-plus';
@@ -57,6 +59,8 @@ const content = ref<string>('');
 const label = ref<string>('');
 const dragList = ref<Tree[]>([]);
 const drag = ref<boolean>(false);
+const route = useRoute();
+const subjectImg = ref<string>('');
 const dialogConfig = reactive({
   title: '主题页配置',
   labelTitle: '主题名称',
@@ -103,9 +107,15 @@ const handleOpen = (data: Tree) => {
   }
   moduleValue.value = true;
   orginData = data;
+  console.log(data);
   label.value = data.label;
-  content.value = data.theme;
+  subjectImg.value = data.subjectImg;
+  content.value = data.labelDesc;
   dragList.value = data.children;
+}
+
+const updateSuccess = (url: string) => {
+  subjectImg.value = url;
 }
 
 const confirm = () => {
@@ -117,10 +127,33 @@ const confirm = () => {
     ElMessage.error(dialogConfig.themeError);
     return;
   }
-  orginData.label = label.value;
-  orginData.children = dragList.value;
-  emit('editSuccess', orginData);
-  handleClose();
+  const catalogList: any[] = [];
+  const contentList: any[] = [];
+  dragList.value.forEach((item, index) => {
+    if (item.type === 'folder') {
+      item.catalogSort = index + 1;
+      catalogList.push(item);
+    } else {
+      item.contentSort = index + 1;
+      contentList.push(item);
+    }
+  })
+  const subjectId = route.params.subjectId as string;
+  const data = {
+    subjectId,
+    subjectName: label.value,
+    subjectImg: subjectImg.value,
+    subjectDesc: content.value,
+    isExpired: 'N',
+    catalogList,
+    companyId: null, // ??
+    contentList
+  };
+  updateSubjectApi(data).then(() => {
+    ElMessage.success('编辑成功');
+    handleClose();
+    emit('editSuccess');
+  });
 }
 
 const dragOptions = computed(() => {
