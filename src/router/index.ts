@@ -114,7 +114,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
     children: [
       {
         name: 'menuDetail',
-        path: 'menu-detail/:catalogId',
+        path: 'menu-detail/:subjectId',
         component: () => import("@/views/systems/menu/index.vue"),
         meta: {
           title: '主题详情',
@@ -126,7 +126,16 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         path: 'menu-list',
         component: () => import("@/views/systems/menu/menuList.vue"),
         meta: {
-          title: '目录管理'
+          title: '主题管理'
+        }
+      },
+      {
+        name: 'catalog',
+        path: 'catalog/:subjectId',
+        component: () => import("@/views/systems/menu/catalog.vue"),
+        meta: {
+          title: '目录管理',
+          hidden: true
         }
       }
     ]
