@@ -11,7 +11,7 @@
     center
   >
     <main>
-      <Upload />
+      <Upload :imageUrl="imageUrl" @update-success="updateSuccess"/>
       <el-form :model="formData">
         <el-form-item prop="url">
           <el-input v-model="formData.url" placeholder="请输入链接地址" size="small"></el-input>
@@ -28,9 +28,10 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import Upload from '@/components/Upload/index.vue';
-import { getAdApi } from '@/api/menu';
+import { getAdApi, addAdApi } from '@/api/menu';
 import { ElMessage } from 'element-plus';
 const moduleValue = ref(false);
+const imageUrl = ref('');
 const formData = reactive({
   picId: '',
   url: ''
@@ -43,6 +44,22 @@ const handleOpen = (id: string) => {
     formData.picId = res.picId;
     formData.url = res.url;
     moduleValue.value = true;
+  })
+}
+
+const updateSuccess = (url: string) => {
+  imageUrl.value = url;
+}
+
+const addAd = () => {
+  const data = {
+    advertiseImg: imageUrl.value,
+    advertiseLink: formData.url,
+
+  }
+  addAdApi(formData).then(() => {
+    ElMessage.success('添加成功');
+    handleClose();
   })
 }
 
