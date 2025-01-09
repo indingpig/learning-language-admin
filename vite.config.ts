@@ -36,6 +36,7 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       proxy: {
         "/api/v1": {
           target: "http://localhost:8080",
+          // target: "http://10.3.122.10:8080",
           rewrite: (path) => path.replace(/^\/api\/v1/, ""),
           ws: true,
           secure: false,

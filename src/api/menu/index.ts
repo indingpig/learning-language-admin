@@ -47,12 +47,35 @@ export function updateCatalogApi(data: any) {
   }) as Promise<{total: number, rows: any[], msg: string}>
 }
 
+export function removeCatalogApi(dictIds: any) {
+  return request({
+    url: "/business/catalog/{dictIds}".replace('{dictIds}', dictIds),
+    method: "delete"
+  }) as Promise<{total: number, rows: any[], msg: string}>
+}
+
+
 export function addContentApi(data: any) {
   return request({
     url: "/business/content",
     method: "post",
     data
   }) as Promise<{total: number, rows: any[], msg: string}>
+}
+
+export function updateContentApi(data: any) {
+  return request({
+    url: "/business/content",
+    method: "put",
+    data
+  }) as Promise<{total: number, rows: any[], msg: string}>
+}
+
+export function removeContentApi(contentIds: any) {
+  return request({
+    url: "/business/content/{contentIds}".replace('{contentIds}', contentIds),
+    method: "delete"
+  }) as Promise<any>
 }
 
 export function getCatalogSubjectApi(subjectId: string) {
@@ -73,5 +96,25 @@ export function getAdApi(AdvertiseId: string) {
   return request({
     url: "/business/advertise/{AdvertiseId}".replace('{AdvertiseId}', AdvertiseId),
     method: "get",
+  }) as any;
+}
+
+
+export function uploadApi(data: any) {
+  return request({
+    url: "/business/qrcode/upload",
+    method: "post",
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }) as any;
+}
+
+export function addAdApi(data: any) {
+  return request({
+    url: "/business/advertise",
+    method: "post",
+    data
   }) as any;
 }
