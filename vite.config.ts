@@ -35,9 +35,11 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       /** 接口代理 */
       proxy: {
         "/api/v1": {
-          target: "http://localhost:8080",
+          // http://10.3.101.70:3333/api/v1/captchaImage
+          // https://config.grandlmoon.com/api/v1/captchaImage
+          target: "https://config.grandlmoon.com",
           // target: "http://10.3.122.10:8080",
-          rewrite: (path) => path.replace(/^\/api\/v1/, ""),
+          // rewrite: (path) => path.replace(/^\/api\/v1/, ""),
           ws: true,
           secure: false,
           /** 是否允许跨域 */
