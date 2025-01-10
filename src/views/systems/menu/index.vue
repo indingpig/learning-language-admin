@@ -6,7 +6,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <el-col :xs="14" :sm="10" :md="8" :lg="6" :xl="1">
+      <el-col :xs="14" :sm="10" :md="8" :lg="6" :xl="4">
         <div class="head-container">
           <el-tree
             :data="deptOptions"
@@ -74,64 +74,64 @@ const qrcodeUrl = ref<string>()
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
 const deptOptions = ref<Tree[]>([
-  {
-    id: 1,
-    label: '主题 1',
-    type: 'theme',
-    children: [
-      {
-        id: 4,
-        label: '目录 1-1',
-        type: 'folder',
-        children: [
-          {
-            id: 9,
-            label: '页面 1-1-1',
-            type: 'page'
-          },
-          {
-            id: 10,
-            label: '页面 1-1-2',
-            type: 'page'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    label: '主题 2',
-    type: 'theme',
-    children: [
-      {
-        id: 5,
-        label: '目录 2-1',
-        type: 'folder',
-      },
-      {
-        id: 6,
-        label: '目录 2-2',
-        type: 'folder',
-      }
-    ]
-  },
-  {
-    id: 3,
-    label: '主题 3',
-    type: 'theme',
-    children: [
-      {
-        id: 7,
-        label: '目录 3-1',
-        type: 'folder',
-      },
-      {
-        id: 8,
-        label: '目录 3-2',
-        type: 'folder',
-      }
-    ]
-  }
+  // {
+  //   id: 1,
+  //   label: '主题 1',
+  //   type: 'theme',
+  //   children: [
+  //     {
+  //       id: 4,
+  //       label: '目录 1-1',
+  //       type: 'folder',
+  //       children: [
+  //         {
+  //           id: 9,
+  //           label: '页面 1-1-1',
+  //           type: 'page'
+  //         },
+  //         {
+  //           id: 10,
+  //           label: '页面 1-1-2',
+  //           type: 'page'
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // },
+  // {
+  //   id: 2,
+  //   label: '主题 2',
+  //   type: 'theme',
+  //   children: [
+  //     {
+  //       id: 5,
+  //       label: '目录 2-1',
+  //       type: 'folder',
+  //     },
+  //     {
+  //       id: 6,
+  //       label: '目录 2-2',
+  //       type: 'folder',
+  //     }
+  //   ]
+  // },
+  // {
+  //   id: 3,
+  //   label: '主题 3',
+  //   type: 'theme',
+  //   children: [
+  //     {
+  //       id: 7,
+  //       label: '目录 3-1',
+  //       type: 'folder',
+  //     },
+  //     {
+  //       id: 8,
+  //       label: '目录 3-2',
+  //       type: 'folder',
+  //     }
+  //   ]
+  // }
 ]);
 const defaultProps = {
   children: 'children',

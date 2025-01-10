@@ -64,6 +64,7 @@ interface WordItem {
   language: string;
   voice: string
 }
+const OriginUrl = location.origin + '/';
 const moduleValue = ref(false);
 const content = ref<string>('');
 const label = ref<string>('');
@@ -108,10 +109,14 @@ const handleOpen = (data: Tree, catalogId: string, addInt: boolean) => {
     orginData = data;
     label.value = data.label;
     content.value = data.contentDesc;
-    imageUrl.value = data.contentImg;
+    imageUrl.value = OriginUrl +  data.contentImg;
     console.log(data);
     setList(data);
   }
+}
+
+const getOrigin = () => {
+  return 'https://config.grandlmoon.com';
 }
 
 const setList = (data: Tree) => {
