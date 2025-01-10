@@ -19,7 +19,7 @@
         <div>
           <QuillEditor v-model:value="content" :options="editorOptions"/>
         </div>
-        <Upload />
+        <Upload :imageUrl="imgUrl" @update-success="updateSuccess"/>
         <!-- tag="transition-group" -->
         <draggable
           v-model="dragList"
@@ -45,7 +45,7 @@
       <div>
         <QuillEditor v-model:value="content" :options="editorOptions"/>
       </div>
-      <Upload />
+      <Upload :imageUrl="imgUrl" @update-success="updateSuccess"/>
       <el-form :model="formData">
         <ul>
           <li class="word-item" v-for="(item, index) in formData.wordsList" :key="index">
@@ -93,6 +93,7 @@ interface WordItem {
   language: string;
   voice: string
 }
+const imgUrl = ref<string>('');
 const moduleValue = ref<boolean>(false);
 const emits = defineEmits(['addSuccess']);
 const liftType = ref('floder');
@@ -128,6 +129,10 @@ const open = () => {
 const handleClose = () => {
   moduleValue.value = false;
   reset();
+}
+
+const updateSuccess = (url: string) => {
+  imgUrl.value = url;
 }
 
 const confirmLiftType = (liftType: string) => {
