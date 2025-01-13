@@ -109,7 +109,7 @@ const handleOpen = (data: Tree, catalogId: string, addInt: boolean) => {
     orginData = data;
     label.value = data.label;
     content.value = data.contentDesc;
-    imageUrl.value = OriginUrl +  data.contentImg;
+    imageUrl.value = data.contentImg;
     console.log(data);
     setList(data);
   }

@@ -2,13 +2,13 @@
   <div class="image-upload-wrap">
     <!-- 图片上传区域 -->
     <div class="image-upload-container" @click="triggerFileInput">
-      <div v-if="!image && !imageUrl">
-        <div v-if="!image" class="image-upload-placeholder">
+      <div v-if="!imageUrl">
+        <div v-if="!imageUrl" class="image-upload-placeholder">
           <span>+</span>
         </div>
-        <img v-if="image" :src="image" alt="Uploaded Image" class="uploaded-image" />
+        <!-- <img v-if="image" :src="image" alt="Uploaded Image" class="uploaded-image" /> -->
       </div>
-      <img v-if="!image && imageUrl" :src="imageUrl" alt="Uploaded Image" class="uploaded-image" />
+      <img v-if="imageUrl" :src="imageUrl" alt="Uploaded Image" class="uploaded-image" />
       <input ref="fileInputRef" type="file" accept="image/*" @change="handleImageUpload" v-show="false"/>
     </div>
   </div>

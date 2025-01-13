@@ -47,7 +47,7 @@
 import { ref, computed, reactive } from 'vue';
 import { useRoute } from "vue-router"
 import { quillEditor as QuillEditor } from 'vue3-quill';
-import { updateSubjectApi } from '@/api/menu';
+import { updateSubjectApi, updateCatalogApi } from '@/api/menu';
 import draggable from 'vuedraggable';
 import Upload from '@/components/Upload/index.vue';
 import { ElMessage } from 'element-plus';
@@ -94,24 +94,31 @@ let orginData: Tree = {
   id: 1,
   children: []
 }
+let dialogType = 'theme';
+let catalogId = '';
 const handleOpen = (data: Tree) => {
   dialogConfig.title = '主题页配置';
   dialogConfig.themeError = '请输入主题名称';
   dialogConfig.labelTitle = '主题名称';
   editorOptions.placeholder = '请输入主题';
+  subjectImg.value = data.subjectImg;
+  dialogType = data.type;
+  content.value = data.labelDesc;
+  label.value = data.label;
+  dragList.value = data.children;
   if (data.type !== 'theme') {
     dialogConfig.title = '目录配置';
     dialogConfig.themeError = '请输入目录名称';
     dialogConfig.labelTitle = '目录名称';
     editorOptions.placeholder = '请输入目录名称';
+    catalogId = data.catalogId;
+    subjectImg.value = data.catalogImg;
+    label.value = data.catalogName;
+    content.value = data.catalogDesc;
   }
   moduleValue.value = true;
   orginData = data;
   console.log(data);
-  label.value = data.label;
-  subjectImg.value = data.subjectImg;
-  content.value = data.labelDesc;
-  dragList.value = data.children;
 }
 
 const updateSuccess = (url: string) => {
@@ -141,15 +148,36 @@ const confirm = () => {
   const subjectId = route.params.subjectId as string;
   const data = {
     subjectId,
-    subjectName: label.value,
-    subjectImg: subjectImg.value,
-    subjectDesc: content.value,
     isExpired: 'N',
-    catalogList,
     companyId: null, // ??
-    contentList
-  };
+  } as any;
+  if (dialogType === 'theme') {
+    data.subjectName = label.value;
+    data.subjectDesc = content.value;
+    data.catalogList = catalogList;
+    data.contentList = contentList;
+    data.subjectImg = subjectImg.value;
+    updateSubject(data);
+  } else {
+    data.catalogId = catalogId;
+    data.catalogDesc = content.value;
+    data.contentList = contentList;
+    data.catalogImg = subjectImg.value;
+    data.catalogName = label.value;
+    updateCatalog(data);
+  }
+}
+
+const updateSubject = (data: any) => {
   updateSubjectApi(data).then(() => {
+    ElMessage.success('编辑成功');
+    handleClose();
+    emit('editSuccess');
+  });
+}
+
+const updateCatalog = (data: any) => {
+  updateCatalogApi(data).then(() => {
     ElMessage.success('编辑成功');
     handleClose();
     emit('editSuccess');
