@@ -6,7 +6,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <el-col :xs="14" :sm="10" :md="8" :lg="6" :xl="4">
+      <el-col :xs="14" :sm="10" :md="8" :lg="8" :xl="8">
         <div class="head-container">
           <el-tree
             :data="deptOptions"

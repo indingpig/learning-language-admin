@@ -2,7 +2,7 @@
   <div class="image-upload-wrap">
     <!-- 图片上传区域 -->
     <div class="image-upload-container" @click="triggerFileInput">
-      <div v-if="image" >
+      <div v-if="!image && !imageUrl">
         <div v-if="!image" class="image-upload-placeholder">
           <span>+</span>
         </div>
