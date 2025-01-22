@@ -70,41 +70,41 @@ export const constantRoutes: RouteRecordRaw[] = [
  */
 export const dynamicRoutes: RouteRecordRaw[] = [
   {
-    path: "/permission",
+    path: "/system",
     component: Layouts,
-    redirect: "/permission/page",
-    name: "Permission",
+    redirect: "/system/user",
+    name: "System",
     meta: {
-      title: "权限",
-      svgIcon: "lock",
-      roles: ["admin", "editor"], // 可以在根路由中设置角色
+      title: "系统管理",
+      svgIcon: "system",
+      // roles: ["admin", "editor"], // 可以在根路由中设置角色
       alwaysShow: true // 将始终显示根菜单
     },
     children: [
       {
-        path: "page",
-        component: () => import("@/views/permission/page.vue"),
-        name: "PagePermission",
+        path: "/ChangePassword",
+        name: "ChangePassword",
+        component: () => import("@/views/changePassword/index.vue"),
         meta: {
-          title: "页面级",
-          roles: ["admin"] // 或者在子导航中设置角色
+          hidden: true,
+          title: "修改密码"
         }
       },
       {
-        path: "directive",
-        component: () => import("@/views/permission/directive.vue"),
-        name: "DirectivePermission",
+        path: "/user",
+        component: () => import("@/views/systems/user/index.vue"),
+        name: "User",
         meta: {
-          title: "按钮级" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
+          title: "用户管理" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
         }
       }
     ]
   },
   {
-    name: 'system',
-    path: '/system',
+    name: 'object',
+    path: '/object',
     component: Layouts,
-    redirect: '/system/menu',
+    redirect: '/object/menu',
     meta: {
       title: '系统管理',
       svgIcon: 'lock',

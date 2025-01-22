@@ -25,3 +25,12 @@ export function getUserInfoApi() {
     method: "get"
   })
 }
+
+
+export function resetUserPwdApi(data: any) {
+  return request({
+    url: "/system/user/resetPwd",
+    method: "put",
+    data
+  })
+}
