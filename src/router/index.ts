@@ -97,6 +97,14 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         meta: {
           title: "用户管理" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
         }
+      },
+      {
+        path: "/company",
+        component: () => import("@/views/systems/company/index.vue"),
+        name: "Company",
+        meta: {
+          title: "主体管理" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
+        }
       }
     ]
   },
@@ -106,7 +114,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
     component: Layouts,
     redirect: '/object/menu',
     meta: {
-      title: '系统管理',
+      title: '主题管理',
       svgIcon: 'lock',
       roles: ['admin'],
       alwaysShow: true
