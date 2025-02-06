@@ -11,6 +11,16 @@
   <el-form ref="themeFormRef" :model="themeFormData">
     <el-row :gutter="20">
       <el-col :span="24">
+        <el-form-item label="挂载主体" prop="companyId">
+          <el-select v-model="themeFormData.companyId">
+            <el-option v-for="(item, index) in companyList" :key="item.companyLink"
+              :value="item.companyId" :label="item.companyName">
+              <span>{{ item.companyName }}({{ item.companyLink }})</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="24">
         <el-form-item label="主题名称" prop="subjectName">
           <el-input v-model="themeFormData.subjectName" placeholder="请输入主题名称"></el-input>
         </el-form-item>
@@ -36,8 +46,17 @@ import { ElMessage } from 'element-plus';
 const moduleValue = ref(false);
 const themeFormData = ref({
   subjectName: '',
-  subjectDesc: ''
+  subjectDesc: '',
+  companyId: ''
 })
+interface Company {
+  companyId: string;
+  companyName: string;
+  companyLink: string;
+}
+const props = defineProps<{
+  companyList: Company[]
+}>()
 const emit = defineEmits(['addSuccess']);
 const handleClose = () => {
   moduleValue.value = false;

@@ -180,10 +180,7 @@ const openConfig = (data: Tree) => {
 
 const subjectId = route.params.subjectId as string;
 const qrCode = (node: Node, data: Tree) => {
-  getQrcodeApi(subjectId).then((res: any) => {
-    qrcodeUrl.value = 'data:image/png;base64,' + res.img;
-    qrcodeInt.value = true;
-  })
+  qrCodeRef.value?.qrCodeInit()
 };
 
 const removeNode = ref<Node | null>(null);
@@ -274,11 +271,11 @@ const initPage = () => {
       res.data.catalogList.forEach((item: any) => {
         item.type = 'folder';
         item.sortId = item.catalogSort;
-        item.label = item.catalogDesc;
+        item.label = item.catalogName;
         item.id = subjectId + '-folder-' + item.catalogId;
         item.children = item.contentList.map((content: any) => {
           content.type = 'page';
-          content.label = content.contentDesc;
+          content.label = content.contentName;
           item.id = subjectId + '-folder-' + item.catalogId + '-page-' + content.contentId;
           content.sortId = content.contentSort;
           return content;
@@ -289,7 +286,7 @@ const initPage = () => {
     if (res.data.contentList) {
       res.data.contentList.forEach((item: any) => {
         item.type = 'page';
-        item.label = item.contentDesc;
+        item.label = item.contentName;
         item.sortId = item.contentSort;
         item.id = subjectId + '-page-' + item.contentId;
       });

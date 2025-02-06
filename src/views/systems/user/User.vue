@@ -6,7 +6,7 @@
     width="50%"
     append-to-body
     title="用户配置"
-    @beforeClose="close"
+    :beforeClose="close"
     center
   >
   <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">

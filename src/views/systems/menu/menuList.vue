@@ -22,7 +22,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" />
+    <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" :companyList="dataList"/>
   </div>
 </template>
 
@@ -31,6 +31,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from "vue-router"
 import NewTheme from './newTheme.vue';
 import { getUserMenuApi } from '@/api/menu';
+import { listCompanyApi } from "@/api/company"
 const newThemeRef = ref<InstanceType<typeof NewTheme>>();
 const router = useRouter();
 const tableData = ref<{
@@ -59,8 +60,21 @@ const getMenu = () => {
   });
 };
 
+const dataList = ref([]);
+
+const getCompanyList = () => {
+  const queryParams = {
+    pageNum: 1,
+    pageSize: 100,
+  };
+  listCompanyApi(queryParams).then((res: any) => {
+    dataList.value = res.rows;
+  })
+}
+
 onMounted(() => {
   getMenu();
+  getCompanyList();
 });
 </script>
 
