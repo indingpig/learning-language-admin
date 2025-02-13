@@ -85,10 +85,11 @@ export function getCatalogSubjectApi(subjectId: string) {
   })
 }
 
-export function getQrcodeApi(subjectId: string) {
+export function getQrcodeApi(url: string) {
   return request({
-    url: "/business/qrcode/{subjectId}".replace('{subjectId}', subjectId),
+    url: "/business/qrcode/getQRImg",
     method: "get",
+    params: {url}
   }) as any;
 }
 
