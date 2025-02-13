@@ -47,7 +47,7 @@ const openAdDialog = () => {
 };
 
 const openQrCode = () => {
-  qrCodeRef.value?.qrCodeInit();
+  qrCodeRef.value?.qrCodeInit('');
 };
 
 const getCatalogList = () => {
