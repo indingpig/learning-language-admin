@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
+import { listCompanyApi } from "@/api/company"
 import { getCatalogSubjectApi, getQrcodeApi, getSubjectApi, removeCatalogApi, removeContentApi } from '@/api/menu';
 import { useRoute, useRouter } from "vue-router"
 import type Node from 'element-plus/es/components/tree/src/model/node'
@@ -73,6 +74,7 @@ const qrcodeInt = ref<boolean>(false);
 const qrcodeUrl = ref<string>()
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
+let dataList: any[] = [];
 const deptOptions = ref<Tree[]>([
   // {
   //   id: 1,
@@ -180,7 +182,9 @@ const openConfig = (data: Tree) => {
 
 const subjectId = route.params.subjectId as string;
 const qrCode = (node: Node, data: Tree) => {
-  qrCodeRef.value?.qrCodeInit()
+  const company = dataList.find(item => item.companyId === data.companyId);
+  const url = `https://app.${company.companyLink}/flashCard?subjectId=${subjectId}`;
+  qrCodeRef.value?.qrCodeInit(url);
 };
 
 const removeNode = ref<Node | null>(null);
@@ -260,6 +264,15 @@ const replaceNodeById = (nodes: Tree[], target: Tree) => {
     }
   }
 };
+const getCompanyList = () => {
+  const queryParams = {
+    pageNum: 1,
+    pageSize: 100,
+  };
+  listCompanyApi(queryParams).then((res: any) => {
+    dataList = res.rows;
+  })
+}
 
 const initPage = () => {
   const subjectId = route.params.subjectId as string;
@@ -302,13 +315,15 @@ const initPage = () => {
         label: subjectName,
         labelDesc: subjectDesc,
         type: 'theme',
+        companyId: res.data.companyId,
         children,
         subjectImg: res.data.subjectImg
       }
     ]
     deptOptions.value = node;
     console.log(res.data);
-  })
+  });
+  getCompanyList();
 }
 
 onMounted(() => {

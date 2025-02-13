@@ -25,9 +25,10 @@ const props = defineProps<{
 }>();
 const qrcodeInt = ref(false);
 const qrcodeUrl = ref<string>('');
-const qrCodeInit = () => {
-  const subjectId = props.subjectId;
-  getQrcodeApi(subjectId).then((res: any) => {
+const qrCodeInit = (url: string) => {
+  // const subjectId = props.subjectId;
+  console.log(url);
+  getQrcodeApi(encodeURIComponent(url)).then((res: any) => {
     qrcodeUrl.value = 'data:image/png;base64,' + res.img;
     qrcodeInt.value = true;
   })
