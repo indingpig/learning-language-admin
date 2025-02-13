@@ -24,7 +24,13 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- <el-row> -->
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="主体logo" prop="companyLogo">
+            <Upload :imageUrl="form.companyImg" @update-success="updateSuccess"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
     <template #footer>
@@ -37,24 +43,32 @@
 import { ref, reactive } from 'vue';
 import { addCompany, getCompany, updateCompany } from '@/api/company';
 import { ElMessage } from 'element-plus';
+import Upload from '@/components/Upload/index.vue';
 const showUser = ref(false);
 const emits = defineEmits(['success'])
 const form = reactive({
   companyId: "",
   companyName: '',
-  companyLink: ''
+  companyLink: '',
+  companyImg: ''
 });
+
 
 const rules = {
   companyName: [{ required: true, message: '请输入主体名称', trigger: 'blur' }],
   companyLink: [{ required: true, message: '请输入主体链接', trigger: 'blur' }]
 };
+
+const updateSuccess = (url: string) => {
+  form.companyImg = url;
+}
 const getUerInfo = (companyId: string) => {
   getCompany(companyId).then((res: any) => {
     // console.log(data);
     form.companyId = res.data.companyId;
     form.companyName = res.data.companyName;
     form.companyLink = res.data.companyLink;
+    form.companyImg = res.data.companyImg;
   });
 };
 
@@ -80,6 +94,7 @@ const close = () => {
   form.companyId = '';
   form.companyName = '';
   form.companyLink = '';
+  form.companyImg = '';
 };
 const handleOpen = (companyId?: string) => {
   showUser.value = true;
