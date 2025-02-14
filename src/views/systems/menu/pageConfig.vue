@@ -101,10 +101,12 @@ let orginData: Tree = {
 }
 let isAdd = true;
 let tempCatalogId = '';
+let tempContentId = '';
 const handleOpen = (data: Tree, catalogId: string, addInt: boolean) => {
   moduleValue.value = true;
   isAdd = addInt;
   tempCatalogId = catalogId;
+  tempContentId = data.contentId;
   if (!addInt) {
     orginData = data;
     label.value = data.label;
@@ -211,6 +213,7 @@ const getContent = () => {
   const data = {
     subjectId,
     catalogId: tempCatalogId,
+    contentId: tempContentId,
     contentImg: imageUrl.value,
     contentDesc: content.value,
     contentName: label.value,
