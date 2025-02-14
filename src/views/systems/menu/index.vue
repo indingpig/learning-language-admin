@@ -323,10 +323,10 @@ const initPage = () => {
     deptOptions.value = node;
     console.log(res.data);
   });
-  getCompanyList();
 }
 
 onMounted(() => {
+  getCompanyList();
   initPage();
 })
 </script>
