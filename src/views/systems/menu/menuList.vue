@@ -22,6 +22,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页 -->
+    <el-pagination
+      style="margin-top: 20px"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pageInfo.pageNum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pageInfo.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="pageInfo.total"
+    />
     <NewTheme ref="newThemeRef" @add-success="handleAddSuccess" :companyList="dataList"/>
   </div>
 </template>
@@ -40,6 +51,12 @@ const tableData = ref<{
   isExpired: string;
 }[]>();
 
+const pageInfo = ref({
+  pageNum: 1,
+  pageSize: 10,
+  total: 0,
+});
+
 const addNewTheme = () => {
   newThemeRef.value?.handleOpen();
 };
@@ -55,9 +72,20 @@ const openEdit = (row: any) => {
 };
 
 const getMenu = () => {
-  getUserMenuApi().then(data => {
+  getUserMenuApi(pageInfo.value).then(data => {
     tableData.value = data.rows;
+    pageInfo.value.total = data.total;
   });
+};
+
+const handleSizeChange = (val: number) => {
+  pageInfo.value.pageSize = val;
+  getMenu();
+};
+
+const handleCurrentChange = (val: number) => {
+  pageInfo.value.pageNum = val;
+  getMenu();
 };
 
 const dataList = ref([]);

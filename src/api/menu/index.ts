@@ -1,9 +1,10 @@
 import { request } from "@/utils/service"
 
-export function getUserMenuApi() {
+export function getUserMenuApi(params: any) {
   return request({
     url: "/business/subject/list",
-    method: "get"
+    method: "get",
+    params
   }) as Promise<{total: number, rows: any[], msg: string}>
 }
 
