@@ -140,8 +140,8 @@ const confirmLiftType = (liftType: string) => {
   const subjectId = route.params.subjectId as string;
   data.subjectId = subjectId;
   if (liftType === 'floder') {
-    data.catalogName = content.value;
-    data.catalogDesc = labelTitle.value;
+    data.catalogName = labelTitle.value;
+    data.catalogDesc = content.value;
     data.contentList = dragList.value;
     addCatalog(data);
   } else {
