@@ -6,6 +6,62 @@
   "description": "移动端通用项目",
   "glyphs": [
     {
+      "icon_id": "18442452",
+      "name": "check",
+      "font_class": "check",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "2674474",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "1048853",
+      "name": "上传",
+      "font_class": "icon_update",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "8288874",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e852",
+      "unicode_decimal": 59474
+    },
+    {
+      "icon_id": "38087455",
+      "name": "西班牙语",
+      "font_class": "xibanyayu",
+      "unicode": "e679",
+      "unicode_decimal": 59001
+    },
+    {
+      "icon_id": "40067002",
+      "name": "english-filled",
+      "font_class": "english-filled",
+      "unicode": "ea24",
+      "unicode_decimal": 59940
+    },
+    {
+      "icon_id": "7275132",
+      "name": "Add",
+      "font_class": "add",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "1138742",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
       "icon_id": "33987013",
       "name": "关闭",
       "font_class": "guanbi",

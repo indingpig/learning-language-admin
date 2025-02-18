@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4741949 */
-  src: url('iconfont.woff2?t=1731316509184') format('woff2'),
-       url('iconfont.woff?t=1731316509184') format('woff'),
-       url('iconfont.ttf?t=1731316509184') format('truetype'),
-       url('iconfont.svg?t=1731316509184#iconfont') format('svg');
+  src: url('iconfont.woff2?t=1739776607457') format('woff2'),
+       url('iconfont.woff?t=1739776607457') format('woff'),
+       url('iconfont.ttf?t=1739776607457') format('truetype'),
+       url('iconfont.svg?t=1739776607457#iconfont') format('svg');
 }
 
 .iconfont {
@@ -12,6 +12,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-check:before {
+  content: "\e600";
+}
+
+.icon-bofang:before {
+  content: "\e624";
+}
+
+.icon-icon_update:before {
+  content: "\e606";
+}
+
+.icon-shanchu:before {
+  content: "\e852";
+}
+
+.icon-xibanyayu:before {
+  content: "\e679";
+}
+
+.icon-english-filled:before {
+  content: "\ea24";
+}
+
+.icon-add:before {
+  content: "\e645";
+}
+
+.icon-close:before {
+  content: "\e644";
 }
 
 .icon-guanbi:before {
