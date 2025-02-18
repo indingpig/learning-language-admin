@@ -1,15 +1,18 @@
 <template>
   <div class="image-upload-wrap">
     <!-- 图片上传区域 -->
-    <div class="image-upload-container" @click="triggerFileInput">
-      <div v-if="!imageUrl">
-        <div v-if="!imageUrl" class="image-upload-placeholder">
-          <span>+</span>
+    <div class="image-upload-container">
+      <div @click="triggerFileInput">
+        <div v-if="!imageUrl">
+          <div v-if="!imageUrl" class="image-upload-placeholder">
+            <span>+</span>
+          </div>
+          <!-- <img v-if="image" :src="image" alt="Uploaded Image" class="uploaded-image" /> -->
         </div>
-        <!-- <img v-if="image" :src="image" alt="Uploaded Image" class="uploaded-image" /> -->
+        <img v-if="imageUrl" :src="imageUrl" alt="Uploaded Image" class="uploaded-image" />
       </div>
-      <img v-if="imageUrl" :src="imageUrl" alt="Uploaded Image" class="uploaded-image" />
       <input ref="fileInputRef" type="file" accept="image/*" @change="handleImageUpload" v-show="false"/>
+      <SvgIcon name="close" class="text-lg del-icon" @click="del" v-if="imageUrl" />
     </div>
   </div>
 </template>
@@ -25,7 +28,7 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 const props = defineProps<{
   imageUrl: string;
 }>();
-const emits = defineEmits(['updateSuccess']);
+const emits = defineEmits(['updateSuccess', 'delSuccess']);
 
 // 触发文件输入框的点击事件
 const triggerFileInput = () => {
@@ -40,6 +43,10 @@ const handleImageUpload = (event: Event) => {
   if (file) {
     handleUpload(file);
   }
+};
+
+const del = () => {
+  emits('delSuccess', '');
 };
 
 const handleUpload = (file: File) => {
@@ -73,6 +80,16 @@ const handleUpload = (file: File) => {
   height: 200px;
   border: 2px dashed #ddd;
   position: relative;
+  cursor: pointer;
+}
+.del-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #fff;
+  background-color: rgba(255, 0, 0, 0.929);
+  border-radius: 50%;
+  padding: 5px;
   cursor: pointer;
 }
 
