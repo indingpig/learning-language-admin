@@ -16,7 +16,7 @@
       <div>
         <QuillEditor v-model:value="content" :options="editorOptions"/>
       </div>
-      <Upload @update-success="updateSuccess" :imageUrl="subjectImg"/>
+      <Upload @update-success="updateSuccess" :imageUrl="subjectImg" @del-success="delSuccess"/>
       <!-- tag="transition-group" -->
       <draggable
         v-model="dragList"
@@ -125,15 +125,11 @@ const updateSuccess = (url: string) => {
   subjectImg.value = url;
 }
 
+const delSuccess = () => {
+  subjectImg.value = '';
+}
+
 const confirm = () => {
-  if (!label.value) {
-    ElMessage.error(dialogConfig.themeError);
-    return;
-  }
-  if (!content.value) {
-    ElMessage.error(dialogConfig.themeError);
-    return;
-  }
   const catalogList: any[] = [];
   const contentList: any[] = [];
   dragList.value.forEach((item, index) => {

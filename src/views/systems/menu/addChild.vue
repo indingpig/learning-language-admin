@@ -19,7 +19,7 @@
         <div>
           <QuillEditor v-model:value="content" :options="editorOptions"/>
         </div>
-        <Upload :imageUrl="imgUrl" @update-success="updateSuccess"/>
+        <Upload :imageUrl="imgUrl" @update-success="updateSuccess" @del-success="delSuccess"/>
         <!-- tag="transition-group" -->
         <draggable
           v-model="dragList"
@@ -45,7 +45,7 @@
       <div>
         <QuillEditor v-model:value="content" :options="editorOptions"/>
       </div>
-      <Upload :imageUrl="imgUrl" @update-success="updateSuccess"/>
+      <Upload :imageUrl="imgUrl" @update-success="updateSuccess" @del-success="delSuccess"/>
       <el-form :model="formData">
         <ul>
           <li class="word-item" v-for="(item, index) in formData.wordsList" :key="index">
@@ -71,7 +71,7 @@
     </main>
     <template #footer>
       <el-button size="small" @click="moduleValue = false">取消</el-button>
-      <el-button size="small" type="primary" @click="confirmLiftType(liftType)" v-loading="btnLoading">确定</el-button>
+      <el-button size="small" type="primary" @click="confirmLiftType(liftType)" :loading="btnLoading">确定</el-button>
     </template>
   </el-dialog>
 </template>
@@ -133,6 +133,10 @@ const handleClose = () => {
 
 const updateSuccess = (url: string) => {
   imgUrl.value = url;
+}
+
+const delSuccess = () => {
+  imgUrl.value = '';
 }
 
 const confirmLiftType = (liftType: string) => {
