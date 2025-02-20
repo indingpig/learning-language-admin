@@ -54,6 +54,7 @@ const handleUpload = (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('name', file.name);
+  fileInputRef.value!.value = '';
   uploadApi(formData).then((res: any) => {
     console.log('上传成功', res);
     ElMessage.success('上传成功');
@@ -81,6 +82,13 @@ const handleUpload = (file: File) => {
   border: 2px dashed #ddd;
   position: relative;
   cursor: pointer;
+  > div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 .del-icon {
   position: absolute;
@@ -104,7 +112,7 @@ const handleUpload = (file: File) => {
 .uploaded-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* 如果上传的是图片，隐藏 + 号 */
