@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { ElTree, ElMessageBox, ElPopover } from 'element-plus';
 import { listCompanyApi } from "@/api/company"
-import { getCatalogSubjectApi, getQrcodeApi, getSubjectApi, removeCatalogApi, removeContentApi } from '@/api/menu';
+import { getCatalogSubjectApi, getQrcodeApi, getSubjectApi, removeCatalogApi, removeContentApi, getAdListApi } from '@/api/menu';
 import { useRoute, useRouter } from "vue-router"
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import ThemeConfig from './themeConfig.vue';
@@ -74,6 +74,8 @@ const qrcodeInt = ref<boolean>(false);
 const qrcodeUrl = ref<string>()
 const popoverRef = ref<InstanceType<typeof ElPopover>>();
 const treeRef = ref<InstanceType<typeof ElTree>>();
+let advertiseId = '';
+let companyId = '';
 let dataList: any[] = [];
 const deptOptions = ref<Tree[]>([
   // {
@@ -142,8 +144,16 @@ const defaultProps = {
 const liftType = ref('floder');
 
 const openAdDialog = () => {
-  adConfigRef.value?.handleOpen('default');
+  adConfigRef.value?.handleOpen(advertiseId, companyId, subjectId);
 };
+
+const getAdList = () => {
+  getAdListApi(subjectId).then((res: any) => {
+    if (res.rows) {
+      advertiseId = res.rows[0]?.advertiseId;
+    }
+  })
+}
 
 const filterNode = (value: string, data: Tree) => {
   if (!value) return true;
@@ -309,6 +319,7 @@ const initPage = () => {
       // if (item1.sortId)
       return item1.sortId - item2.sortId;
     });
+    companyId = res.data.companyId;
     const node = [
       {
         id: subjectId,
@@ -328,6 +339,7 @@ const initPage = () => {
 onMounted(() => {
   getCompanyList();
   initPage();
+  getAdList();
 })
 </script>
 
