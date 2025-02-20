@@ -25,8 +25,8 @@
             </el-form-item>
             <el-form-item>
               <el-radio-group v-model="item.wordsLanguage" size="small">
-                <el-radio-button label="ES" value="ES" />
-                <el-radio-button label="EN" value="EN" />
+                <el-radio-button label="ES" value="Spanish" />
+                <el-radio-button label="EN" value="English" />
               </el-radio-group>
             </el-form-item>
             <el-form-item>
@@ -187,7 +187,7 @@ const handleUpload = () => {
 const addItem = () => {
   formData.wordsList.push({
     wordsText: '',
-    wordsLanguage: 'EN',
+    wordsLanguage: 'English',
     wordsVoice: '',
     wordsVideo: '',
     contentId: tempContentId,
