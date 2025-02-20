@@ -11,11 +11,15 @@
     center
   >
     <main>
-      <Upload :imageUrl="imageUrl" @update-success="updateSuccess"/>
-      <el-form :model="formData">
-        <el-form-item prop="url">
-          <el-input v-model="formData.url" placeholder="请输入链接地址" size="small"></el-input>
+      <Upload :imageUrl="formData.advertiseImg" @update-success="updateSuccess" @del-success="delSuccess"/>
+      <el-form :model="formData" label-position="top">
+        <el-form-item prop="advertiseLink" :label="alertTitle">
+          <el-input v-model="formData.advertiseLink" placeholder="请输入链接地址"></el-input>
         </el-form-item>
+        <div v-if="formData.advertiseLink">
+          <p>保存前请确认链接地址是否正确：</p>
+          <el-link type="primary" :href="formData.advertiseLink" target="_blank">{{formData.advertiseLink}}</el-link>
+        </div>
       </el-form>
     </main>
     <template #footer>
@@ -28,47 +32,82 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import Upload from '@/components/Upload/index.vue';
-import { getAdApi, addAdApi } from '@/api/menu';
+import { getAdApi, addAdApi, updateAdApi } from '@/api/menu';
 import { ElMessage } from 'element-plus';
 const moduleValue = ref(false);
 const imageUrl = ref('');
 const formData = reactive({
-  picId: '',
-  url: ''
+  advertiseImg: '',
+  advertiseLink: ''
 })
+const alertTitle = '网址必须以http://或https://开头';
 const handleClose = () => {
   moduleValue.value = false;
+  formData.advertiseImg = '';
+  formData.advertiseLink = '';
+  imageUrl.value = '';
+  subjectId = '';
+  companyId = '';
 }
-const handleOpen = (id: string) => {
+let subjectId = '';
+let companyId = '';
+let advertiseId = '';
+const handleOpen = (id: string, adCompanyId: string, adAubjectId: string) => {
+  moduleValue.value = true;
+  subjectId = adAubjectId;
+  companyId = adCompanyId;
+  advertiseId = id;
+  if (!id) return;
   getAdApi(id).then((res: any) => {
-    formData.picId = res.picId;
-    formData.url = res.url;
-    moduleValue.value = true;
+    formData.advertiseImg = res.advertiseImg;
+    formData.advertiseLink = res.advertiseLink;
   })
 }
 
 const updateSuccess = (url: string) => {
-  imageUrl.value = url;
+  formData.advertiseImg = url;
+}
+
+const delSuccess = () => {
+  formData.advertiseImg = '';
+}
+
+const getData = () => {
+  return {
+    advertiseImg: formData.advertiseImg,
+    advertiseLink: formData.advertiseLink,
+    subjectId,
+    // companyId,
+    advertiseId
+  }
 }
 
 const addAd = () => {
-  const data = {
-    advertiseImg: imageUrl.value,
-    advertiseLink: formData.url,
-
-  }
-  addAdApi(formData).then(() => {
+  const data = getData();
+  addAdApi(data).then(() => {
     ElMessage.success('添加成功');
     handleClose();
   })
 }
 
+const updateAd = () => {
+  const data = getData();
+  updateAdApi(data).then(() => {
+    ElMessage.success('修改成功');
+    handleClose();
+  })
+}
+
 const confirm = () => {
-  if (!formData.url) {
+  if (!formData.advertiseLink) {
     ElMessage.error('请输入链接地址');
     return;
   }
-  handleClose();
+  if (advertiseId) {
+    updateAd();
+  } else {
+    addAd();
+  }
 }
 
 

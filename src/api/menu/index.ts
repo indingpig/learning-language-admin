@@ -94,9 +94,16 @@ export function getQrcodeApi(url: string) {
   }) as any;
 }
 
-export function getAdApi(AdvertiseId: string) {
+export function getAdApi(advertiseId: string) {
   return request({
-    url: "/business/advertise/{AdvertiseId}".replace('{AdvertiseId}', AdvertiseId),
+    url: "/business/advertise/{advertiseId}".replace('{advertiseId}', advertiseId),
+    method: "get",
+  }) as any;
+}
+
+export function getAdListApi(subjectId: string) {
+  return request({
+    url: "/business/advertise/subject/{subjectId}".replace('{subjectId}', subjectId),
     method: "get",
   }) as any;
 }
@@ -117,6 +124,14 @@ export function addAdApi(data: any) {
   return request({
     url: "/business/advertise",
     method: "post",
+    data
+  }) as any;
+}
+
+export function updateAdApi(data: any) {
+  return request({
+    url: "/business/advertise",
+    method: "put",
     data
   }) as any;
 }
