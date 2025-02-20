@@ -16,22 +16,32 @@
       <div>
         <QuillEditor v-model:value="content" :options="editorOptions"/>
       </div>
-      <Upload :image-url="imageUrl" @update-success="updateSuccess"/>
+      <Upload :image-url="imageUrl" @update-success="updateSuccess" @del-success="delSuccess"/>
       <el-form :model="formData">
         <ul>
           <li class="word-item" v-for="(item, index) in formData.wordsList" :key="index">
             <el-form-item class="word">
-              <el-input v-model="item.words" placeholder="请输入单词/句子" size="small"></el-input>
+              <el-input v-model="item.wordsText" placeholder="请输入单词/句子" size="small"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-radio-group v-model="item.language" size="small">
+              <el-radio-group v-model="item.wordsLanguage" size="small">
                 <el-radio-button label="ES" value="ES" />
                 <el-radio-button label="EN" value="EN" />
               </el-radio-group>
             </el-form-item>
             <el-form-item>
-              <SvgIcon name="icon_update" class="text-lg page-icon" @click="uploadAudio(index)"/>
-              <SvgIcon name="shanchu" class="text-lg page-icon" @click="delItem(index)"/>
+              <el-radio-group v-model="item.isWord" size="small">
+                <el-radio-button label="单词" value="1" />
+                <el-radio-button label="句子" value="0" />
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item>
+              <SvgIcon name="icon_update" class="text-lg page-icon icon" @click="uploadAudio(index)"/>
+              <SvgIcon name="check-blue" class="text-lg page-icon icon" v-if="item.wordsVoice"/>
+              <SvgIcon name="check" class="text-lg icon" v-if="!item.wordsVoice"/>
+              <SvgIcon name="bofang" class="text-lg page-icon icon" v-if="item.wordsVoice" @click="playAudio(item.wordsVoice)"/>
+              <SvgIcon name="jingyin" class="text-lg icon" v-if="!item.wordsVoice"/>
+              <SvgIcon name="shanchu" class="text-lg page-icon icon" @click="delItem(index)"/>
             </el-form-item>
           </li>
           <li>
@@ -40,6 +50,7 @@
         </ul>
       </el-form>
     </main>
+    <audio :src="MediaUrl" ref="audioRef"></audio>
     <input ref="audioInputRef" type="file" accept=".mp3, .wav, .mp4, .webm, audio/mpeg, audio/wav, video/mp4, video/webm" @change="handleUpload" v-show="false"/>
     <template #footer>
       <el-button type="primary" @click="confirm">确定</el-button>
@@ -59,10 +70,25 @@ import { ElMessage } from 'element-plus';
 interface Tree {
   [key: string]: any
 }
-interface WordItem {
-  words: string;
-  language: string;
-  voice: string
+interface BusinessWordsInfo {
+  wordsId?: string;
+  wordsText: string;
+  wordsLanguage: string;
+  wordsVoice: string,
+  wordsVideo: string,
+  contentId: string,
+  isWord: string
+}
+interface BusinessContentInfo {
+  contentId: string;       // 内容编号
+  catalogId: string;       // 目录编号
+  subjectId: string;       // 主题id
+  contentName: string;     // 内容名称
+  contentImg: string;      // 内容图片
+  contentDesc: string;     // 内容描述
+  contentSort?: number;     // 内容排序
+  isExpired?: string;       // 是否过期 (Y=是, N=否)
+  wordsList: BusinessWordsInfo[];  // 名下页面 (关联 BusinessWordsInfo 类型)
 }
 const OriginUrl = location.origin + '/';
 const moduleValue = ref(false);
@@ -78,10 +104,10 @@ const dialogConfig = reactive({
   themeError: '请输入页面名称',
 })
 const formData = reactive({
-  words: '',
+  wordsText: '',
   content: '',
   language: 'EN',
-  wordsList: [] as WordItem[]
+  wordsList: [] as BusinessWordsInfo[]
 })
 const editorOptions = ref(editorOptionsData);
 const emit = defineEmits(['editSuccess']);
@@ -93,6 +119,8 @@ const handleClose = () => {
   formData.wordsList = [];
 
 }
+const MediaUrl = ref('');
+const audioRef = ref<HTMLAudioElement | null>(null);
 let orginData: Tree = {
   label: '',
   type: 'theme',
@@ -113,7 +141,7 @@ const handleOpen = (data: Tree, catalogId: string, addInt: boolean) => {
     content.value = data.contentDesc;
     imageUrl.value = data.contentImg;
     console.log(data);
-    setList(data);
+    formData.wordsList = data.wordsList;
   }
 }
 
@@ -121,37 +149,18 @@ const getOrigin = () => {
   return 'https://config.grandlmoon.com';
 }
 
-const setList = (data: Tree) => {
-  formData.wordsList = [];
-  if (data.contentEnName) {
-    formData.wordsList.push({
-      words: data.contentEnName,
-      voice: data.contentEnVoice,
-      language: 'EN'
-    });
-  }
-  if (data.contentEnSentences) {
-    formData.wordsList.push({
-      words: data.contentEnSentences,
-      voice: data.enSentencesVoice,
-      language: 'EN'
-    });
-  }
-  if (data.contentEsName) {
-    formData.wordsList.push({
-      words: data.contentEsName,
-      voice: data.contentEsVoice,
-      language: 'ES'
-    });
-  }
-  if (data.contentEsSentences) {
-    formData.wordsList.push({
-      words: data.contentEsSentences,
-      voice: data.esSentencesVoice,
-      language: 'ES'
-    });
-  }
+const playAudio = (str: string) => {
+  MediaUrl.value = str;
+  audioRef.value?.play();
 }
+
+const delSuccess = () => {
+  imageUrl.value = '';
+}
+
+// const setList = (data: Tree) => {
+//   formData.wordsList = data.wordsList;
+// }
 
 const updateSuccess = (url: string) => {
   imageUrl.value = url;
@@ -166,16 +175,19 @@ const handleUpload = () => {
     uploadApi(Data).then((res: any) => {
       console.log('上传成功', res);
       ElMessage.success('上传成功');
-      formData.wordsList[currentIndex].voice = res.fileurl;
+      formData.wordsList[currentIndex].wordsVoice = res.fileurl;
     });
   }
 }
 
 const addItem = () => {
   formData.wordsList.push({
-    words: '',
-    language: 'EN',
-    voice: ''
+    wordsText: '',
+    wordsLanguage: 'EN',
+    wordsVoice: '',
+    wordsVideo: '',
+    contentId: tempContentId,
+    isWord: '1'
   })
   nextTick(() => {
     const addItemRefDom = document.getElementById('addItemRef');
@@ -210,50 +222,19 @@ const updateContent = (data: any) => {
 
 const getContent = () => {
   const subjectId = route.params.subjectId as string;
-  const data = {
+  const data: BusinessContentInfo = {
     subjectId,
     catalogId: tempCatalogId,
     contentId: tempContentId,
     contentImg: imageUrl.value,
     contentDesc: content.value,
     contentName: label.value,
-    contentEnName: '',
-    contentEnVoice: '',
-    contentEsName: '',
-    contentEsVoice: '',
-  } as { [key: string]: any }
-  formData.wordsList.forEach((item, index) => {
-    if (item.language === 'EN') {
-      if (index % 2 === 0) {
-        data.contentEnName = item.words;
-        data.contentEnVoice = item.voice;
-      } else {
-        data.contentEnSentences = item.words;
-        data.enSentencesVoice = item.voice;
-      }
-    }
-    if (item.language === 'ES') {
-      if (index % 2 === 0) {
-        data.contentEsName = item.words;
-        data.contentEsVoice = item.voice;
-      } else {
-        data.contentEsSentences = item.words;
-        data.esSentencesVoice = item.voice;
-      }
-    }
-  })
+    wordsList: formData.wordsList
+  };
   return data;
 }
 
 const confirm = () => {
-  if (!label.value) {
-    ElMessage.error(dialogConfig.themeError);
-    return;
-  }
-  if (!content.value) {
-    ElMessage.error(dialogConfig.themeError);
-    return;
-  }
   const data = getContent();
   if (isAdd) {
     addContent(data);
@@ -294,7 +275,7 @@ defineExpose({
   cursor: pointer;
   color: #409EFF;
 }
-.page-icon + .page-icon {
+.icon + .icon {
   margin-left: 10px;
 }
 
