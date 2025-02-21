@@ -40,7 +40,7 @@
     </el-row>
     <ThemeConfig ref="themeConfigRef" @edit-success="handleEditSuccess" />
     <PageConfig ref="pageConfigRef" @edit-success="handleEditSuccess" />
-    <AdConfig ref="adConfigRef"/>
+    <AdConfig ref="adConfigRef" @success="handleEditSuccess"/>
     <QrCode ref="qrCodeRef" :subject-id="subjectId" />
     <AddChild ref="addChildRef" @add-success="handleAddSuccess" />
 

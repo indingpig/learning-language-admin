@@ -40,6 +40,7 @@ const formData = reactive({
   advertiseImg: '',
   advertiseLink: ''
 })
+const emits = defineEmits(['success']);
 const alertTitle = '网址必须以http://或https://开头';
 const handleClose = () => {
   moduleValue.value = false;
@@ -86,6 +87,7 @@ const addAd = () => {
   const data = getData();
   addAdApi(data).then(() => {
     ElMessage.success('添加成功');
+    emits('success');
     handleClose();
   })
 }
@@ -94,6 +96,7 @@ const updateAd = () => {
   const data = getData();
   updateAdApi(data).then(() => {
     ElMessage.success('修改成功');
+    // emits('success');
     handleClose();
   })
 }
