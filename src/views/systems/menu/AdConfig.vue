@@ -59,8 +59,8 @@ const handleOpen = (id: string, adCompanyId: string, adAubjectId: string) => {
   advertiseId = id;
   if (!id) return;
   getAdApi(id).then((res: any) => {
-    formData.advertiseImg = res.advertiseImg;
-    formData.advertiseLink = res.advertiseLink;
+    formData.advertiseImg = res.data.advertiseImg;
+    formData.advertiseLink = res.data.advertiseLink;
   })
 }
 
