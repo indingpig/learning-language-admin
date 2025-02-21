@@ -43,6 +43,9 @@ import { useRouter } from "vue-router"
 import NewTheme from './newTheme.vue';
 import { getUserMenuApi } from '@/api/menu';
 import { listCompanyApi } from "@/api/company"
+defineOptions({
+  name: 'menu',
+})
 const newThemeRef = ref<InstanceType<typeof NewTheme>>();
 const router = useRouter();
 const tableData = ref<{

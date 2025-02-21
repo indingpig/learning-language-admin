@@ -59,6 +59,9 @@ import AdConfig from './AdConfig.vue';
 import QrCode from './qrCode.vue';
 import AddChild from './addChild.vue';
 import { onMounted, ref } from 'vue';
+defineOptions({
+  name: 'menuDetail',
+})
 interface Tree {
   [key: string]: any
 }

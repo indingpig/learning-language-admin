@@ -103,6 +103,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         component: () => import("@/views/systems/company/index.vue"),
         name: "Company",
         meta: {
+          keepAlive: true,
           title: "主体管理" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
         }
       }
@@ -125,6 +126,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         path: 'menu-detail/:subjectId',
         component: () => import("@/views/systems/menu/index.vue"),
         meta: {
+          keepAlive: true,
           title: '主题详情',
           hidden: true
         }
@@ -134,6 +136,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         path: 'menu-list',
         component: () => import("@/views/systems/menu/menuList.vue"),
         meta: {
+          keepAlive: true,
           title: '主题管理'
         }
       },
